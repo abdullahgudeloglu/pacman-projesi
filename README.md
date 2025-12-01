@@ -1,13 +1,15 @@
 # Pacman Projesi
 
-Bu proje, Python programlama dili kullanılarak geliştirilmiş klasik Pacman oyununun bir uyarlamasıdır.
+Bu proje, HTML5 ve JavaScript kullanılarak geliştirilmiş, tarayıcı tabanlı klasik Pacman oyunudur.
 
 ## Kullanılan Teknolojiler
-* Python
-* Pygame Kütüphanesi
+* HTML5
+* CSS
+* JavaScript
 
-## Nasıl Çalıştırılır
-1. Bilgisayarınızda Python kurulu olduğundan emin olun.
-2. Gerekli kütüphaneyi yükleyin: `pip install pygame`
-3. Proje dosyalarını indirin.
-4. Terminalde şu komutu yazarak oyunu başlatın: `python main.py`
+## Nasıl Oynanır
+Oyun tarayıcı üzerinden direkt oynanabilir. Kurulum gerektirmez.
+**Oyun Linki:** https://abdullahgudeloglu.github.io/pacman-projesi/
+
+## Kontrol
+* Yön tuşlarını kullanarak Pacman'i hareket ettirin ve yemleri toplayın.
