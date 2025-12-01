@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Pacman Oyunu</title>
+    <title>Abdullah'ın Modern Pacman Oyunu</title>
     <style>
         body {
             background-color: #111;
@@ -14,7 +14,7 @@
             margin: 0;
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden; /* Kaydırma çubuklarını gizle */
+            overflow: hidden;
         }
         h2 {
             margin-bottom: 10px;
@@ -23,7 +23,7 @@
         canvas {
             background-color: #000;
             border: 4px solid #333;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2); /* Neon parlama efekti */
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
             border-radius: 10px;
         }
         .info {
@@ -55,7 +55,7 @@
         speed: 5,
         mouthOpen: 0.2,
         mouthSpeed: 0.05,
-        angle: 0, // Yön açısı (radyan)
+        angle: 0, 
         nextX: 0,
         nextY: 0
     };
@@ -67,10 +67,11 @@
     let ghosts = [];
 
     function initGhosts() {
+        // HIZ AYARLARI BURADA YAPILDI (Daha yavaşlar)
         ghosts = [
-            { x: 50, y: 50, color: "red", speed: 2, vx: 2, vy: 2 },
-            { x: 550, y: 50, color: "pink", speed: 2.5, vx: -2, vy: 2 },
-            { x: 50, y: 550, color: "cyan", speed: 3, vx: 2, vy: -2 }
+            { x: 50, y: 50, color: "red", speed: 1.0, vx: 1, vy: 1 },    // Çok Yavaş
+            { x: 550, y: 50, color: "pink", speed: 1.5, vx: -1, vy: 1 }, // Orta
+            { x: 50, y: 550, color: "cyan", speed: 2.0, vx: 1, vy: -1 }  // Biraz Hızlı
         ];
     }
     
@@ -79,14 +80,12 @@
         x: Math.random() * (canvas.width - 40) + 20,
         y: Math.random() * (canvas.height - 40) + 20,
         size: 6,
-        color: "#ffb897" // Şeftali rengi yem
+        color: "#ffb897"
     };
 
     // Tuş Dinleyicileri
     window.addEventListener("keydown", function(e) {
         keys[e.key] = true;
-        
-        // Oyun bittiyse Enter ile yeniden başlat
         if (isGameOver && e.key === "Enter") {
             resetGame();
         }
@@ -108,22 +107,22 @@
     function update() {
         if (isGameOver) return;
 
-        // Pacman Hareketi ve Yön Ayarı
+        // Pacman Hareketi
         if (keys["ArrowUp"] && pacman.y > pacman.size) {
             pacman.y -= pacman.speed;
-            pacman.angle = -Math.PI / 2; // Yukarı
+            pacman.angle = -Math.PI / 2;
         }
         else if (keys["ArrowDown"] && pacman.y < canvas.height - pacman.size) {
             pacman.y += pacman.speed;
-            pacman.angle = Math.PI / 2; // Aşağı
+            pacman.angle = Math.PI / 2;
         }
         else if (keys["ArrowLeft"] && pacman.x > pacman.size) {
             pacman.x -= pacman.speed;
-            pacman.angle = Math.PI; // Sola (180 derece)
+            pacman.angle = Math.PI;
         }
         else if (keys["ArrowRight"] && pacman.x < canvas.width - pacman.size) {
             pacman.x += pacman.speed;
-            pacman.angle = 0; // Sağa (0 derece)
+            pacman.angle = 0;
         }
 
         // Ağız Animasyonu
@@ -141,29 +140,28 @@
             score += 10;
             food.x = Math.random() * (canvas.width - 40) + 20;
             food.y = Math.random() * (canvas.height - 40) + 20;
-            // Her 50 puanda hayaletler hızlansın
+            
+            // Her 50 puanda hayaletler ÇOK AZ hızlansın (Eskiden 0.5 idi, şimdi 0.2)
             if (score % 50 === 0) {
                 ghosts.forEach(g => {
-                    g.speed += 0.5;
+                    g.speed += 0.2;
                 });
             }
         }
 
-        // Hayalet Hareketi ve Çarpışma
+        // Hayalet Hareketi
         ghosts.forEach(ghost => {
-            // Basit Takip Mantığı (Pacman'e doğru yavaşça yönel)
             if (pacman.x > ghost.x) ghost.x += ghost.speed * 0.6;
             else ghost.x -= ghost.speed * 0.6;
             
             if (pacman.y > ghost.y) ghost.y += ghost.speed * 0.6;
             else ghost.y -= ghost.speed * 0.6;
 
-            // Hayalet Pacman'e çarptı mı?
             let gDx = pacman.x - ghost.x;
             let gDy = pacman.y - ghost.y;
             let gDist = Math.sqrt(gDx * gDx + gDy * gDy);
 
-            if (gDist < pacman.size + 15) { // 15 hayalet boyutu
+            if (gDist < pacman.size + 15) {
                 isGameOver = true;
             }
         });
@@ -171,43 +169,39 @@
 
     // Çizim İşlemleri
     function draw() {
-        // Ekranı Temizle
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Yemi Çiz
+        // Yem
         ctx.fillStyle = food.color;
         ctx.beginPath();
         ctx.arc(food.x, food.y, food.size, 0, Math.PI * 2);
         ctx.shadowBlur = 10;
         ctx.shadowColor = "white";
         ctx.fill();
-        ctx.shadowBlur = 0; // Efekti sıfırla
+        ctx.shadowBlur = 0;
 
-        // Pacman'i Çiz (Döndürme işlemi ile)
-        ctx.save(); // Mevcut çizim ayarlarını kaydet
-        ctx.translate(pacman.x, pacman.y); // Çizim merkezini Pacman'in konumuna taşı
-        ctx.rotate(pacman.angle); // Pacman'in yönüne göre döndür
+        // Pacman
+        ctx.save();
+        ctx.translate(pacman.x, pacman.y);
+        ctx.rotate(pacman.angle);
         
         ctx.fillStyle = "yellow";
         ctx.beginPath();
-        // Ağzı çiz
         ctx.arc(0, 0, pacman.size, pacman.mouthOpen * Math.PI, (2 - pacman.mouthOpen) * Math.PI);
         ctx.lineTo(0, 0);
         ctx.fill();
-        ctx.restore(); // Ayarları eski haline getir
+        ctx.restore();
 
-        // Hayaletleri Çiz
+        // Hayaletler
         ghosts.forEach(ghost => {
             ctx.fillStyle = ghost.color;
             ctx.beginPath();
-            // Hayalet Vücudu (Yarım daire + alt kısım)
             ctx.arc(ghost.x, ghost.y, 15, Math.PI, 0); 
             ctx.lineTo(ghost.x + 15, ghost.y + 15);
             ctx.lineTo(ghost.x - 15, ghost.y + 15);
             ctx.fill();
             
-            // Gözler
             ctx.fillStyle = "white";
             ctx.beginPath();
             ctx.arc(ghost.x - 5, ghost.y - 2, 4, 0, Math.PI * 2);
@@ -220,12 +214,12 @@
             ctx.fill();
         });
 
-        // Skor Tablosu
+        // Skor
         ctx.fillStyle = "white";
         ctx.font = "bold 20px Consolas";
         ctx.fillText("SKOR: " + score, 15, 30);
 
-        // Game Over Ekranı
+        // Game Over
         if (isGameOver) {
             ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -238,7 +232,7 @@
             ctx.fillStyle = "white";
             ctx.font = "20px Verdana";
             ctx.fillText("Yeniden başlamak için ENTER'a bas", canvas.width/2, canvas.height/2 + 40);
-            ctx.textAlign = "start"; // Hizalamayı düzelt
+            ctx.textAlign = "start";
         }
     }
 
@@ -248,12 +242,10 @@
         if (!isGameOver) {
             requestAnimationFrame(gameLoop);
         } else {
-            // Oyun bitse bile Game Over yazısı için bir kez daha çiz
             draw(); 
         }
     }
 
-    // Başlat
     initGhosts();
     gameLoop();
 
